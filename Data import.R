@@ -2,7 +2,9 @@
 ## Importing the initial data:
 
 library(tidyverse)
-library(readr)
+library(tigris)
+library(sf)
+library(ggmap)
 
 miami <- read_csv(file = "miamidadecounty_fl.csv",
                   col_types = cols(
@@ -18,6 +20,31 @@ miami <- read_csv(file = "miamidadecounty_fl.csv",
                     State = col_character(),
                     year = col_double(),
                     month = col_double(),
-                    yearmonth = col_double()))
+                    yearmonth = col_double())) %>% 
+  filter(Latitude <= 27.0 & Latitude >= 24.0)
+
+#GPS stuff
+#NORTH: 27
+#SOUTH: 24
+#WEST: 
+
+
 
 # We can also use the link if we are doing it on the app. 
+
+raw_shapes_305 <- urban_areas(class = "sf")
+
+shapes_305 <- raw_shapes_305 %>% 
+              filter(NAME10 == "Miami, FL")
+  
+  
+map_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"), 
+                  crs = st_crs(shapes_305))
+
+
+ggplot(data = shapes_305) + geom_sf() +
+  geom_sf(data = map_2)
+
+
+
+
