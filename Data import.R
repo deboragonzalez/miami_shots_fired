@@ -1,3 +1,5 @@
+# Script for rough draft of Shotspotter shinyapp:
+
 
 ## Importing the initial data:
 
@@ -26,45 +28,44 @@ miami <- read_csv(file = "miamidadecounty_fl.csv",
   filter(Latitude <= 27.0 & Latitude >= 24.0) %>% 
   filter(Longitude <= -79.0 & Longitude >= -82.0)
 
-#GPS stuff
-#NORTH: 27
-#SOUTH: 24
-#WEST: 
+# We can also use the link if we are doing it on the app.
 
-
-
-# We can also use the link if we are doing it on the app. 
+# Now, let's get the shapefiles using tigris.
 
 raw_shapes_305 <- urban_areas(class = "sf")
 
 shapes_305 <- raw_shapes_305 %>% 
               filter(NAME10 == "Miami, FL")
   
+# Converting the ShotSpotter data to sf --> in order to plot it on shape file.
   
-map_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"), 
+miami_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"), 
                   crs = st_crs(shapes_305))
 
+# Let's map it:
 
 ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
-  geom_sf(data = map_2, color = "black", alpha  = 0.4) + 
+  geom_sf(data = miami_2, color = "black", alpha  = 0.4) + 
   theme_bw() + 
   theme(axis.text.x = element_blank())
   
 
 # A look at the numbers:
 
-# other attempts at other formats of data tables 
-# incidents <- miami %>% 
-#   select(year, month) %>% 
-#   group_by(year) %>% 
-#   summarize(number = n()) %>% 
-#   spread(year, number)
-#   
-# monthly_incidents <- miami %>% 
-#   select(year, month) %>% 
-#   group_by(month) %>% 
-#   summarize(number = n()) %>% 
-#   spread(month, number)
+      # Other attempts at other formats of data tables 
+      # incidents <- miami %>% 
+      #   select(year, month) %>% 
+      #   group_by(year) %>% 
+      #   summarize(number = n()) %>% 
+      #   spread(year, number)
+      #   
+      # monthly_incidents <- miami %>% 
+      #   select(year, month) %>% 
+      #   group_by(month) %>% 
+      #   summarize(number = n()) %>% 
+      #   spread(month, number)
+
+# Monthly incidents by year
 
 incident_nice <- miami %>% 
   select(year, month) %>% 
@@ -73,6 +74,7 @@ incident_nice <- miami %>%
   spread(year, x, fill = 0)
 
 
+# Let's graoh it: 
 
 incident_nice %>% 
   ggplot() +
@@ -89,15 +91,13 @@ incident_nice %>%
                        labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
                                 "Aug", "Sep", "Oct", "Nov", "Dec"),
                      limits = c(1,12)) +
-  
-  #come back to edit font and colors later
-
   annotate(geom = "text", x = 10.5, y = 80, label = "2012") +
   annotate(geom = "text", x = 1, y = 110, label = "2013") +
   annotate(geom = "text", x = 10, y = 175, label = "2017") +
   annotate(geom = "text", x = 4, y = 200, label = "2018") + 
   theme_economist()
   
+# How we want to title this project
   # 'Shots "Spotted" in Miami  by Year'
   
 
