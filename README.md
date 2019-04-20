@@ -1,1 +1,9 @@
-# shotspotter
+# Shots "Spotted" in the Miami Urban Area
+### Justice Tech Lab - ShotSpotter Data
+
+*Geographical distribution of detected shots fired in Miami, FL in 2012, 2013, 2017, & 2018
+*Graphical presentation of the aggregate shots detected in these years by month. 
+
+Data: courtesy of the Justice Tech Lab and the 'tigris' package in R. 
+
+
