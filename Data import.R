@@ -47,22 +47,23 @@ miami_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"),
 ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
   geom_sf(data = miami_2, color = "black", alpha  = 0.4) + 
   theme_bw() + 
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank()) +
+  theme(text = element_text(size = 8))
   
 
 # A look at the numbers:
 
-      # Other attempts at other formats of data tables 
-      # incidents <- miami %>% 
-      #   select(year, month) %>% 
-      #   group_by(year) %>% 
-      #   summarize(number = n()) %>% 
+      # # Other attempts at other formats of data tables
+      # incidents <- miami %>%
+      #   select(year, month) %>%
+      #   group_by(year) %>%
+      #   summarize(number = n()) %>%
       #   spread(year, number)
-      #   
-      # monthly_incidents <- miami %>% 
-      #   select(year, month) %>% 
-      #   group_by(month) %>% 
-      #   summarize(number = n()) %>% 
+      # 
+      # monthly_incidents <- miami %>%
+      #   select(year, month) %>%
+      #   group_by(month) %>%
+      #   summarize(number = n()) %>%
       #   spread(month, number)
 
 # Monthly incidents by year
@@ -95,7 +96,8 @@ incident_nice %>%
   annotate(geom = "text", x = 1, y = 110, label = "2013") +
   annotate(geom = "text", x = 10, y = 175, label = "2017") +
   annotate(geom = "text", x = 4, y = 200, label = "2018") + 
-  theme_economist()
+  theme_economist() +
+  theme(text = element_text(size = 8))
   
 # How we want to title this project
   # 'Shots "Spotted" in Miami  by Year'

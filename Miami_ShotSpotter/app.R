@@ -69,7 +69,9 @@ ui <- fluidPage(
           tabPanel("Where do the Shootings Occur?",
                    plotOutput("MAP")),
           tabPanel("A Closer Look at the Numbers",
-                   plotOutput("graph_lines"))
+                   plotOutput("graph_lines")),
+          tabPanel("Source and Background",
+                   verbatimTextOutput("text"))
                    )
                 )
             ))
@@ -109,8 +111,13 @@ server <- function(input, output) {
        annotate(geom = "text", x = 10, y = 175, label = "2017") +
        annotate(geom = "text", x = 4, y = 200, label = "2018") + 
        theme_economist()
-     
-   })
+                                      })
+   
+  output$text <- renderText({
+    "The data for this project comes from the Justice Tech Lab. Special thanks to \nDr. Doleac and Justice Tech for allowing public access to the data. \nhttp://justicetechlab.org
+\nHere is a link to the GitHub for this app: \nhttps://github.com/deboragonzalez/miami_shots_fired
+    \n\nApplication Authors: D. Gonzalez & B. Meche" 
+                            })
 }
 
 # Run the application 
