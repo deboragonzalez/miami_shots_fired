@@ -7,7 +7,7 @@ library(ggmap)
 library(maps)
 library(ggthemes)
 library(shiny)
-
+library(gganimate)
 
 # Data setup
 
@@ -71,7 +71,7 @@ ui <- fluidPage(
           tabPanel("A Closer Look at the Numbers",
                    plotOutput("graph_lines")),
           tabPanel("Source and Background",
-                   verbatimTextOutput("text"))
+                   htmlOutput("text"))
                    )
                 )
             ))
@@ -81,13 +81,17 @@ ui <- fluidPage(
 server <- function(input, output) {
    
    output$MAP <- renderPlot({
-     miami_subset <- miami_2 %>% filter(year == input$year)
+     miami_subset <- miami_2 %>% filter(year == input$year) %>% 
+       sample_n(50)
      
      # Draw map
      ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
        geom_sf(data = miami_subset, color = "black", alpha  = 0.4) + 
        theme_bw() + 
-       theme(axis.text.x = element_blank())
+       theme(axis.text.x = element_blank()) +
+       labs(title = "Shots Spotted by Month: {closest_state}",
+            subtitle = "per year selected") +
+       transition_states(month, 30, 20, wrap = TRUE)
    })
    
    output$graph_lines <- renderPlot({
@@ -114,9 +118,15 @@ server <- function(input, output) {
                                       })
    
   output$text <- renderText({
-    "The data for this project comes from the Justice Tech Lab. Special thanks to \nDr. Doleac and Justice Tech for allowing public access to the data. \nhttp://justicetechlab.org
-\nHere is a link to the GitHub for this app: \nhttps://github.com/deboragonzalez/miami_shots_fired
-    \n\nApplication Authors: D. Gonzalez & B. Meche" 
+'<h3><b>About this Project</b></h3>
+<br/>
+The data for this project comes from the ShotSpotter project at the Justice Tech Lab. Special thanks to Dr. Doleac and Justice Tech for allowing public access to the data.
+<br/><br/>
+<a href="http://justicetechlab.org">Learn more about the Justice Tech Lab</a>
+<br/><br/>
+<a href="https://github.com/deboragonzalez/miami_shots_fired">See the Github repository for this project</a>
+
+<br/> <br/>Application Authors: D. Gonzalez & B. Meche'
                             })
 }
 
