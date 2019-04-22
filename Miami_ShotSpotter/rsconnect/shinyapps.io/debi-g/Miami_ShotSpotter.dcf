@@ -1,0 +1,12 @@
+name: Miami_ShotSpotter
+title: Miami_ShotSpotter
+username:
+account: debi-g
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 882567
+bundleId: 2030305
+url: https://debi-gonzalez.shinyapps.io/Miami_ShotSpotter/
+when: 1555960547.34075
+asMultiple: FALSE
+asStatic: FALSE

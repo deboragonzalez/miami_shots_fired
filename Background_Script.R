@@ -40,15 +40,20 @@ shapes_305 <- raw_shapes_305 %>%
 # Converting the ShotSpotter data to sf --> in order to plot it on shape file.
   
 miami_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"), 
-                  crs = st_crs(shapes_305))
+                  crs = st_crs(shapes_305)) %>% 
+            filter(year == 2018)
 
 # Let's map it:
 
-ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
+giph <- ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
   geom_sf(data = miami_2, color = "black", alpha  = 0.4) + 
   theme_bw() + 
   theme(axis.text.x = element_blank()) +
-  theme(text = element_text(size = 8))
+  theme(text = element_text(size = 8)) +
+  labs(title = "Shots Spotted in 2018 by Month: {closest_state}") +
+  transition_states(month, 20,30, wrap = TRUE)
+
+anim_save("final_plot.gif", animate(giph))
   
 
 # A look at the numbers:

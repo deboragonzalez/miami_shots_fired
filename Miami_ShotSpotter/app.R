@@ -84,7 +84,8 @@ server <- function(input, output) {
    output$final_animation <- renderImage({
      
      list(src = "final_plot.gif",
-          contentType = 'image/gif')
+          contentType = 'image/gif')},
+     deleteFile = FALSE)
  #     miami_subset <- miami_2 %>% filter(year == 2018)
  #     
  #     # Draw map
@@ -98,7 +99,6 @@ server <- function(input, output) {
  #      animation_opts(5000, transition = 1000, easing  = "elastic", redraw = FALSE)
  #    ggplotly(anim)
        
-   })
    
    output$graph_lines <- renderPlot({
      incident_nice %>% 
