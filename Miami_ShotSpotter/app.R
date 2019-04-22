@@ -8,6 +8,7 @@ library(maps)
 library(ggthemes)
 library(shiny)
 library(gganimate)
+library(plotly)
 
 # Data setup
 
@@ -56,42 +57,47 @@ ui <- fluidPage(
    titlePanel('Shots "Spotted" in the Miami Urban Area'),
    
    # Select years to show: 
-   sidebarLayout(
-      sidebarPanel(
-         selectInput(inputId = "year",
-                     label = "Select Year:",
-                     choices = c("2012", "2013", "2017", "2018"),
-                     selected = NULL)),
+ #  sidebarLayout(
+      # sidebarPanel(
+      #    selectInput(inputId = "year",
+      #                label = "Select Year:",
+      #                choices = c("2012", "2013", "2017", "2018"),
+      #                selected = NULL)),
       
       # Set up tabs
       mainPanel(
         tabsetPanel(
           tabPanel("Where do the Shootings Occur?",
-                   plotOutput("MAP")),
+                   imageOutput("final_animation")),
           tabPanel("A Closer Look at the Numbers",
                    plotOutput("graph_lines")),
           tabPanel("Source and Background",
                    htmlOutput("text"))
                    )
                 )
-            ))
+            )
 
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   output$MAP <- renderPlot({
-     miami_subset <- miami_2 %>% filter(year == input$year) %>% 
-       sample_n(50)
+   output$final_animation <- renderImage({
      
-     # Draw map
-     ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
-       geom_sf(data = miami_subset, color = "black", alpha  = 0.4) + 
-       theme_bw() + 
-       theme(axis.text.x = element_blank()) +
-       labs(title = "Shots Spotted by Month: {closest_state}",
-            subtitle = "per year selected") +
-       transition_states(month, 30, 20, wrap = TRUE)
+     list(src = "final_plot.gif",
+          contentType = 'image/gif')
+ #     miami_subset <- miami_2 %>% filter(year == 2018)
+ #     
+ #     # Draw map
+ #    anim <- ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
+ #       geom_sf(data = miami_subset, color = "black", alpha  = 0.4) + 
+ #       theme_bw() + 
+ #       theme(axis.text.x = element_blank()) +
+ #       labs(title = "Shots Spotted in 2018 by Month: {closest_state}") 
+ # #           subtitle = "per year selected") +
+ #    anim <- anim %>%
+ #      animation_opts(5000, transition = 1000, easing  = "elastic", redraw = FALSE)
+ #    ggplotly(anim)
+       
    })
    
    output$graph_lines <- renderPlot({
