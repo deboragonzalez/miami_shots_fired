@@ -38,23 +38,6 @@ miami <- read_csv(file = "miamidadecounty_fl.csv",
   
   filter(Latitude <= 27.0 & Latitude >= 24.0) %>% 
   filter(Longitude <= -79.0 & Longitude >= -82.0)
-
-                                      # Shape files
-                                      # Now, let's get the shapefiles using tigris.
-                                      # Step 1: download all of the shapefiles available.
-                                      
-                                      # raw_shapes_305 <- urban_areas(class = "sf")
-                                      #
-                                      # # Step 2: grab only the Miami-specific shapefile information.
-                                      #
-                                      # shapes_305 <- raw_shapes_305 %>%
-                                      #   filter(NAME10 == "Miami, FL")
-                                      #
-                                      # # Converting the ShotSpotter data to sf --> in order to plot it on shape file.
-                                      #
-                                      # miami_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"),
-                                      #                   crs = st_crs(shapes_305))
-                                      
                                       
 
 # Data manipulation for the 2nd plot
