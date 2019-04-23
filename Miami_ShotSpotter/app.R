@@ -1,4 +1,5 @@
 # Libraries
+# Choose your tools wisely:
 
 library(tidyverse)
 library(tigris)
@@ -11,6 +12,11 @@ library(gganimate)
 library(plotly)
 
 # Data setup
+# Much of the data importing and parsing code comes from the "Background Script"
+
+# Read in the core data from J.Tech and incorporate the implicit parsing that is
+# posted in the console. This allows for a clean run in the end and likely less
+# margin for error.
 
 miami <- read_csv(file = "miamidadecounty_fl.csv",
                   col_types = cols(
@@ -27,21 +33,34 @@ miami <- read_csv(file = "miamidadecounty_fl.csv",
                     year = col_double(),
                     month = col_double(),
                     yearmonth = col_double())) %>% 
+  
+  # Filter here to remove extraneous points in the ocean and elsewhere.
+  
   filter(Latitude <= 27.0 & Latitude >= 24.0) %>% 
   filter(Longitude <= -79.0 & Longitude >= -82.0)
 
-# Shape files
-
-raw_shapes_305 <- urban_areas(class = "sf")
-
-shapes_305 <- raw_shapes_305 %>% 
-  filter(NAME10 == "Miami, FL")
-
-
-miami_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"), 
-                  crs = st_crs(shapes_305))
+                                      # Shape files
+                                      # Now, let's get the shapefiles using tigris.
+                                      # Step 1: download all of the shapefiles available.
+                                      
+                                      # raw_shapes_305 <- urban_areas(class = "sf")
+                                      #
+                                      # # Step 2: grab only the Miami-specific shapefile information.
+                                      #
+                                      # shapes_305 <- raw_shapes_305 %>%
+                                      #   filter(NAME10 == "Miami, FL")
+                                      #
+                                      # # Converting the ShotSpotter data to sf --> in order to plot it on shape file.
+                                      #
+                                      # miami_2 <- st_as_sf(miami, coords = c("Longitude", "Latitude"),
+                                      #                   crs = st_crs(shapes_305))
+                                      
+                                      
 
 # Data manipulation for the 2nd plot
+# Monthly incidents by year This is the table that is used in the 'overview'
+# chart. It contains the standard gov1005 workflow:
+# select-group-summarize-spread
 
 incident_nice <- miami %>% 
   select(year, month) %>% 
@@ -49,24 +68,38 @@ incident_nice <- miami %>%
   summarise(x = n()) %>% 
   spread(year, x, fill = 0)
 
-# Define UI for application that draws the plots
+# Define UI for application that draws the plots.
+# No "data manipulation" for the
+# animation because the 'gif' was created and saved in the background script.
+# See "Background_Script.R" for the details of this.
 
 ui <- fluidPage(
    
    # Application title
+  
    titlePanel('Shots "Spotted" in the Miami Urban Area'),
    
-   # Select years to show: 
- #  sidebarLayout(
-      # sidebarPanel(
-      #    selectInput(inputId = "year",
-      #                label = "Select Year:",
-      #                choices = c("2012", "2013", "2017", "2018"),
-      #                selected = NULL)),
-      
-      # Set up tabs
+   #  We originally had a reactive panel with options to show the geography of
+   #  gunshots my selecting the year. This tab was replaced my the animation,
+   #  but we are leaving the code here so that we may come back and add this
+   #  feature back to the app.
+   
+             # Select years to show: 
+             #  sidebarLayout(
+                # sidebarPanel(
+                #    selectInput(inputId = "year",
+                #                label = "Select Year:",
+                #                choices = c("2012", "2013", "2017", "2018"),
+                #                selected = NULL)),
+          
+      # Set up tabs tabsetPanel allows for the creation of separate panels to be
+      # accessed by tab clicking in the app. Cool!
+   
       mainPanel(
         tabsetPanel(
+          
+          #Add a title to each ___Output
+          
           tabPanel("Where do the Shootings Occur?",
                    imageOutput("final_animation")),
           tabPanel("A Closer Look at the Numbers",
@@ -78,27 +111,22 @@ ui <- fluidPage(
             )
 
 
-# Define server logic required to draw a histogram
+# Define server logic for the desired output types
+
 server <- function(input, output) {
    
+  # This is where we read in our previously-constructed gif. Specify that this
+  # process should NOT delete your file after running... Why this is necessary I
+  # do not know, but this function prefers 'single-use' gifs I suppose.
+  
    output$final_animation <- renderImage({
      
      list(src = "final_plot.gif",
           contentType = 'image/gif')},
      deleteFile = FALSE)
- #     miami_subset <- miami_2 %>% filter(year == 2018)
- #     
- #     # Draw map
- #    anim <- ggplot(data = shapes_305) + geom_sf(color = "black", fill = "lightgreen") +
- #       geom_sf(data = miami_subset, color = "black", alpha  = 0.4) + 
- #       theme_bw() + 
- #       theme(axis.text.x = element_blank()) +
- #       labs(title = "Shots Spotted in 2018 by Month: {closest_state}") 
- # #           subtitle = "per year selected") +
- #    anim <- anim %>%
- #      animation_opts(5000, transition = 1000, easing  = "elastic", redraw = FALSE)
- #    ggplotly(anim)
-       
+  
+   # This is the same code as was constructed in the script, just contained in
+   # the appropriate braces, parentheses etc.
    
    output$graph_lines <- renderPlot({
      incident_nice %>% 
@@ -123,6 +151,11 @@ server <- function(input, output) {
        theme_economist()
                                       })
    
+   # Here is my rusty attempt at HTML. Key idea here was to have a link to the
+   # data provider and the GitHub for this project. This was / is accomplished.
+   # Also included: gratitude and colleagues. Pro Tip: make normal HTML code and
+   # then wrap the whole thing in ""s.
+   
   output$text <- renderText({
 '<h3><b>About this Project</b></h3>
 <br/>
@@ -136,6 +169,9 @@ The data for this project comes from the ShotSpotter project at the Justice Tech
                             })
 }
 
-# Run the application 
+# Don't forget to actually make the app run, the world must see this
+# masterpiece!
+# Names for the components are quite unoriginal...
+
 shinyApp(ui = ui, server = server)
 
